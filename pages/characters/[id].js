@@ -9,8 +9,9 @@ const fetcher = async (url) => {
   // we still try to parse and throw it.
   if (!res.ok) {
     const error = new Error("An error occurred while fetching the data.");
-    // Attach extra info to the error object.
-    error.info = await res.json();
+    // Attach extra info to the error object
+    const apiError = await res.json();
+    error.info = apiError.detail;
     error.status = res.status;
     throw error;
   }
@@ -26,7 +27,12 @@ export default function Character() {
   );
 
   if (isLoading) return <h1>Loading Star Wars Character...</h1>;
-  if (error) return <h1>{`${error.status}: ${error.info}`}</h1>;
+  if (error)
+    return (
+      <h1>
+        {error.status}: {error.info}
+      </h1>
+    );
   return (
     <Layout>
       <Card
